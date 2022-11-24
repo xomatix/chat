@@ -1,20 +1,19 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Conversations{% endblock %}</h1>
+  <h1>{% block title %}Conversation{% endblock %}</h1>
   {% if g.user %}
     <a href="{{ url_for('conv.create') }}">Add conversation</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
-  {% for conv in conversations %}
+  {% for msg in messages %}
     <article class="conv">
       <header>
         <div>
-            
-          <h1>{{ conv['users'].1 }}</h1>
-          <a href="{{ url_for('conv.conversation', id = conv['id']) }}"><div class="about">by {{ conv['users'] }}</div></a>
+          <h1>{{ msg['id'] }}</h1>
+          <div class="about">by {{ msg['value'] }}</div>
         </div>
        
       </header>
