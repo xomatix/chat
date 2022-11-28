@@ -6,6 +6,7 @@
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
+      <li><span>{{ g.user['id'] }}</span>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}
       <li><a href="{{ url_for('auth.register') }}">Register</a>
@@ -21,4 +22,15 @@
     <div class="flash">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
+
+  <script>
+    const form = document.getElementsByTagName('form');
+    console.log(form);
+    form[0].addEventListener('onload', function handleSubmit(event) {
+        event.preventDefault();
+
+        form[0].reset();
+      });
+
+  </script>
 </section>

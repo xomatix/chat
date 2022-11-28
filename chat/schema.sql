@@ -34,11 +34,12 @@ CREATE TABLE message (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     author TEXT NOT NULL,
     value TEXT NOT NULL,
-    date DATETIME NOT NULL
+    date DATETIME NOT NULL,
+    conv INTEGER
 );
 
 CREATE TABLE conversation (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    users TEXT[] NOT NULL,
-    messages INTEGER[]
+    cuser INTEGER,
+    suser INTEGER
 );

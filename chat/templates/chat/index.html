@@ -9,16 +9,17 @@
 
 {% block content %}
   {% for conv in conversations %}
-    <article class="conv">
+  <a href="{{ url_for('conv.conversation', id = conv['id']) }}">
+    <div class="conv">
       <header>
         <div>
             
-          <h1>{{ conv['users'].1 }}</h1>
-          <a href="{{ url_for('conv.conversation', id = conv['id']) }}"><div class="about">by {{ conv['users'] }}</div></a>
+          <h1>Conversation with - <b>{{ users[loop.index0] }}</b></h1>
+          <div class="about">by {{ conv['users'] }}</div>
         </div>
        
       </header>
-    </article>
-    
+    </div>
+  </a>
   {% endfor %}
 {% endblock %}
