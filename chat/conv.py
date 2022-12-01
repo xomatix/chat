@@ -35,7 +35,7 @@ def index():
         pass
 
     users = [item[0]['nickname'] for item in users]
-    #c = users[0][0]['nickname']
+    #aac = users[0][0]['nickname']
     print(users, uid)
     
         
