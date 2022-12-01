@@ -1,29 +1,53 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Conversation{% endblock %}</h1>
-  
+<h1>{% block title %}Conversation{% endblock %}</h1>
+
 {% endblock %}
 
 {% block content %}
+<div class="row d-flex justify-content-center">
   {% for msg in messages %}
-    <article class="conv">
-      <header>
-        <div>
-          <h1>{{ msg['id'] }}</h1>
-          <h1>{{ msg['author'] }}</h1>
-          <p>{{ msg['date'] }}</p>
-          <a href="{{ url_for('conv.delete', conv=conv, id=msg['id']) }}">🗑</a>
-          <div class="about">by {{ msg['value'] }}</div>
-        </div>
-       
-      </header>
-    </article>
-    
+
+  <div class="d-flex {% if msg['author'] == g.user['nickname'] %}justify-content-end {% else %} justify-content-start{% endif %}">
+
+    {% if msg['author'] == g.user['nickname'] %}
+
+    <p class="small px-3 mb-1 text-muted">{{ msg['date'] }}</p>
+      {% if msg['author'] == g.user['nickname'] %}
+        <a class="small px-3 mb-1 card-link" href="{{ url_for('conv.delete', conv=conv, id=msg['id']) }}">🗑</a>
+        <a class=" small px-3 mb-1 card-link" href="{{ url_for('conv.edit', conv=conv, id=msg['id']) }}">🖊</a>
+      {% endif %}
+    <p class="small px-3 mb-1">{{ msg['id'] }}.{{ msg['author'] }}</p>
+
+    {% else %}
+
+    <p class="small px-3 mb-1">{{ msg['id'] }}.{{ msg['author'] }}</p>
+      {% if msg['author'] == g.user['nickname'] %}
+        <a class="small px-3 mb-1 card-link" href="{{ url_for('conv.delete', conv=conv, id=msg['id']) }}">🗑</a>
+        <a class=" small px-3 mb-1 card-link" href="{{ url_for('conv.edit', conv=conv, id=msg['id']) }}">🖊</a>
+      {% endif %}
+    <p class="small px-3 mb-1 text-muted">{{ msg['date'] }}</p>
+
+    {% endif %}
+
+    <p class="small px-3 mb-1">{{ msg['id'] }}.{{ msg['author'] }}</p>
+  </div>
+  <div
+    class="d-flex flex-row {% if msg['author'] == g.user['nickname'] %}justify-content-end {% else %} justify-content-start{% endif %} mb-4 pt-1">
+    <div>
+      <p class="small p-2 me-3 mb-3 text-white rounded-3 {% if msg['author'] == g.user['nickname'] %}bg-success {% else %} bg-danger{% endif %}">{{ msg['value'] }}</p>
+    </div>
+  </div>
+
   {% endfor %}
-  <form method="post">
-    <label for="message">Enter message {{user}}</label>
-    <input name="message" id="message" value="{{ request.form['message'] }}" required>
-    <input type="submit" value="Send">
-  </form>
+</div>
+<form method="post">
+  <label for="message">Enter message {{user}}</label>
+  <input name="message" id="message" value="{{ request.form['message'] }}" required>
+  <input type="submit" value="Send">
+</form>
+<script>
+  window.scrollBy(0, 9999);
+</script>
 {% endblock %}

@@ -1,12 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
-from werkzeug.exceptions import abort
 
 from chat.auth import login_required
 from chat.db import get_db
-import json
 
 bp = Blueprint('conv', __name__)
 
@@ -78,13 +76,43 @@ def create():
 def conversation(id):
     
     db = get_db()
+
+    if request.method == 'POST':
+        try:
+            message = request.form['message']
+            db = get_db()
+            error = None
+            db.execute(
+                f'INSERT INTO message (author, value, date, conv) VALUES ( "{g.user["nickname"]}", "{message}", "{datetime.now()}", {id})'
+            )
+            db.commit()
+            print(id, g.user["nickname"])
+            return redirect(url_for('conv.conversation', id=id))
+    
+        except EOFError as e:
+            flash(e)
+
+
     messages = []
     try:
         messages = db.execute(
             f'SELECT * FROM message WHERE conv = {id}'
         ).fetchall()
+        messages = messages[-50:]
+        messages = [{k: item[k] for k in item.keys()} for item in messages]
+        
     except Exception:
         pass
+
+    
+    for i in messages:
+        i['date'] = datetime.strptime(i['date'], "%Y-%m-%d %H:%M:%S.%f")
+        if i['date'] + timedelta(days=1) < datetime.now(): 
+            i['date'] = datetime.strftime(i['date'], "%Y-%m-%d %H:%M")
+        else:
+            i['date'] = datetime.strftime(i['date'], "%H:%M")
+        
+        print(i['date'])
     
     user = -1
     uid = g.user['id']
@@ -101,27 +129,7 @@ def conversation(id):
     
     except Exception:
         pass
-
-    try:
-        if request.method == 'POST':
-            message = request.form['message']
-            db = get_db()
-            error = None
-            db.execute(
-                f'INSERT INTO message (author, value, date, conv) VALUES ( "{g.user["nickname"]}", "{message}", "{datetime.now()}", {id})'
-            )
-            db.commit()
-            print(id, g.user["nickname"])
-            return redirect(url_for('conv.conversation', id=id))
-    except EOFError as e:
-        print(e)
-        pass
-
-       # return redirect(url_for('conv.conversation', id=id))
-        
-    
-    
-
+  
     return render_template('chat/conversation.html', messages = messages, user=user, conv=id)
 
 @bp.route('/msg/<conv>/<id>', methods=('GET', 'POST'))
@@ -154,3 +162,38 @@ def delete(conv,id):
 
     
     return redirect(url_for('conv.conversation', id=conv))
+
+@bp.route('/msg/<conv>/<id>/edit', methods=('GET', 'POST'))
+@login_required
+def edit(conv,id):
+   
+    msgid = -1
+    db = get_db()
+    try:
+        msgid = db.execute(
+            f'SELECT id FROM message WHERE author = "{g.user["nickname"]}" AND id = {id}'
+        ).fetchone()
+    except BufferError as e:
+        print(e)
+        pass
+    
+    if int(msgid['id']) != int(id):
+        return (url_for('conv.conversation', id=conv))
+    
+    if request.method == 'POST':
+        try:
+            message = request.form['message']
+            db.execute(
+                f'UPDATE message SET value="{message}" WHERE id = {id}'
+            )
+            db.commit()
+        except BufferError as e:
+            flash(e)
+        return redirect(url_for('conv.conversation', id=conv))
+        
+    
+    message = db.execute(
+            f'SELECT value FROM message WHERE author = "{g.user["nickname"]}" AND id = {id}'
+        ).fetchone()
+    
+    return render_template("chat/edit.html", message=message)

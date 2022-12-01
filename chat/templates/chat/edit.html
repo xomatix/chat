@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit Message{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="message">Message</label>
+    <input name="message" id="message" value="{{ request.form['message'] }}{{ message['value'] }}" required></input>
+    <input type="submit" value="Edit">
+  </form>
+{% endblock %}
