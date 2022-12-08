@@ -3,23 +3,19 @@
 {% block header %}
   <h1>{% block title %}Conversations{% endblock %}</h1>
   {% if g.user %}
-    <a href="{{ url_for('conv.create') }}">Add conversation</a>
+    <a class="btn btn-primary my-2" href="{{ url_for('conv.create') }}">➕</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
   {% for conv in conversations %}
-  <a href="{{ url_for('conv.conversation', id = conv['id']) }}">
-    <div class="conv">
-      <header>
-        <div>
-            
-          <h1>Conversation with - <b>{{ users[loop.index0] }}</b></h1>
-          <div class="about">by {{ conv['users'] }}</div>
-        </div>
-       
-      </header>
-    </div>
-  </a>
+  <div class="card my-2 " style="">
+      <a href="{{ url_for('conv.conversation', id = conv['id']) }}" class="text-decoration-none text-dark">
+      <div class="card-body align-left ">
+        <h5 class="card-title">Conversation with - <b>{{ users[loop.index0] }}</b></h5>
+        <p class="card-text ">{{ lastmsg[loop.index0] }}</p>
+      </div>
+    </a>
+  </div>
   {% endfor %}
 {% endblock %}

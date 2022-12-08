@@ -6,8 +6,11 @@
 
 {% block content %}
   <form method="post">
-    <label for="nickname">Contact Nickname</label>
-    <input name="nickname" id="nickname" value="{{ request.form['nickname'] }}" required>
-    <input type="submit" value="Add Contact">
+    <div class="form-group">
+
+      <label for="nickname">Contact Nickname</label>
+      <input name="nickname" class="form-control" id="nickname" value="{{ request.form['nickname'] }}" required>
+    </div>
+    <input type="submit" class="btn btn-primary my-2" value="Add Contact">
   </form>
 {% endblock %}

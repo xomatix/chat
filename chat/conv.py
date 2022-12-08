@@ -21,25 +21,37 @@ def index():
         pass
     users = []
     uid = g.user['id']
+    lastmsg = []
     try:
 
         for item in conversations:
             t = item['cuser']
             if item['cuser'] == uid:
                 t = item['suser']
-            users.append(db.execute(
-                f'SELECT nickname FROM user WHERE id = {t}'
-            ).fetchall())
+                users.append(db.execute(
+                    f'SELECT id, nickname FROM user WHERE id = {t}'
+                ).fetchall())
+
+        for item in conversations:
+            for user in users:
+                if item['suser'] == user[0]['id'] or item['cuser'] == user[0]['id']:
+                    lastmsg.append(db.execute(
+                        f'SELECT value FROM message WHERE conv = {item["id"]}'
+                    ).fetchall())
+                    print( len(lastmsg[-1]))
+                    lastmsg[-1] = lastmsg[-1][-1]['value'] if len(lastmsg[-1]) > 0 else "no messages"
     
     except Exception:
         pass
 
     users = [item[0]['nickname'] for item in users]
-    #aac = users[0][0]['nickname']
-    print(users, uid)
+    print(lastmsg)
+    #lastmsg = [item[0]['value'] for item in lastmsg]
+
+    print(users, uid, lastmsg)
     
         
-    return render_template('chat/index.html', conversations=conversations, users=users)
+    return render_template('chat/index.html', conversations=conversations, users=users, lastmsg=lastmsg)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required

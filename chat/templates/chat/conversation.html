@@ -41,13 +41,19 @@
   </div>
 
   {% endfor %}
-</div>
-<form method="post">
-  <label for="message">Enter message {{user}}</label>
-  <input name="message" id="message" value="{{ request.form['message'] }}" required>
-  <input type="submit" value="Send">
-</form>
-<script>
-  window.scrollBy(0, 9999);
-</script>
+  </div>
+
+  <form method="post">
+
+    <div class="input-group mb-0">
+      <input name="message" id="message" class="form-control" placeholder="Type message" value="{{ request.form['message'] }}" required></input>
+      <button class="btn btn-primary" type="button" id="button-addon2" style="padding-top: .55rem;">
+        Send
+      </button>
+    </div>
+  </form>
+
+  <script>
+    window.scrollBy(0, 9999);
+  </script>
 {% endblock %}

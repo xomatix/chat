@@ -6,8 +6,10 @@
 
 {% block content %}
   <form method="post">
-    <label for="message">Message</label>
-    <input name="message" id="message" value="{{ request.form['message'] }}{{ message['value'] }}" required></input>
-    <input type="submit" value="Edit">
+    <div class="form-group">
+      <label for="message">Message</label>
+      <input name="message" id="message" class="form-control" value="{{ request.form['message'] }}{{ message['value'] }}" required></input>
+    </div>
+    <input type="submit" class="btn btn-primary my-2" value="Edit">
   </form>
 {% endblock %}
