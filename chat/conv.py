@@ -22,15 +22,16 @@ def index():
     users = []
     uid = g.user['id']
     lastmsg = []
+    print(conversations[-1]["cuser"])
     try:
 
         for item in conversations:
             t = item['cuser']
             if item['cuser'] == uid:
                 t = item['suser']
-                users.append(db.execute(
-                    f'SELECT id, nickname FROM user WHERE id = {t}'
-                ).fetchall())
+            users.append(db.execute(
+                f'SELECT id, nickname FROM user WHERE id = {t}'
+            ).fetchall())
 
         for item in conversations:
             for user in users:
@@ -38,7 +39,7 @@ def index():
                     lastmsg.append(db.execute(
                         f'SELECT value FROM message WHERE conv = {item["id"]}'
                     ).fetchall())
-                    print( len(lastmsg[-1]))
+                    #print( len(lastmsg[-1]))
                     lastmsg[-1] = lastmsg[-1][-1]['value'] if len(lastmsg[-1]) > 0 else "no messages"
     
     except Exception:
@@ -174,6 +175,43 @@ def delete(conv,id):
 
     
     return redirect(url_for('conv.conversation', id=conv))
+
+@bp.route('/<conv>', methods=('GET', 'POST'))
+@login_required
+def deleteconv(conv):
+   
+    convid = -1
+    db = get_db()
+    try:
+        convid = db.execute(
+            f'SELECT id FROM conversation WHERE cuser = "{g.user["id"]}" OR suser = "{g.user["id"]}" AND id = {conv}'
+        ).fetchone()
+    except BufferError as e:
+        print(e)
+        pass
+
+    print(convid['id'], g.user["nickname"])
+    print(type(convid['id']), type(conv))
+    
+    if int(convid['id']) != int(conv):
+        return (url_for('conv.conversation', id=conv))
+        #return convid['id'] , id
+    
+    db.execute(
+        f'DELETE FROM conversation WHERE id = {conv}'
+    )
+    
+    db.commit()
+
+    db.execute(
+        f'DELETE FROM message WHERE conv = {conv}'
+    )
+    
+    db.commit()
+    flash("deleted")
+
+    
+    return redirect(url_for('conv.index'))
 
 @bp.route('/msg/<conv>/<id>/edit', methods=('GET', 'POST'))
 @login_required

@@ -36,19 +36,19 @@
   <div
     class="d-flex flex-row {% if msg['author'] == g.user['nickname'] %}justify-content-end {% else %} justify-content-start{% endif %} mb-4 pt-1">
     <div>
-      <p class="small p-2 me-3 mb-3 text-white rounded-3 {% if msg['author'] == g.user['nickname'] %}bg-success {% else %} bg-danger{% endif %}">{{ msg['value'] }}</p>
+      <p class="small p-2 me-3 mb-3 text-white rounded-3 {% if msg['author'] == g.user['nickname'] %}bg-primary {% else %} bg-primary{% endif %}">{{ msg['value'] }}</p>
     </div>
   </div>
 
   {% endfor %}
   </div>
 
-  <form method="post">
+  <form method="post" class="fixed-bottom">
 
     <div class="input-group mb-0">
       <input name="message" id="message" class="form-control" placeholder="Type message" value="{{ request.form['message'] }}" required></input>
-      <button class="btn btn-primary" type="button" id="button-addon2" style="padding-top: .55rem;">
-        Send
+      <button class="btn btn-primary" type="submit" id="button-addon2" style="padding-top: .55rem;">
+        Send 🌲
       </button>
     </div>
   </form>
